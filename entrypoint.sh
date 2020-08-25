@@ -17,7 +17,7 @@ WPE_ENV=${WPE_ENVIRONMENT:-$WPE_ENVIRONMENT_DEFAULT}
 WPE_LOCAL_BRANCH_DEFAULT="master"
 WPE_BRANCH=${WPE_LOCAL_BRANCH:-$WPE_LOCAL_BRANCH_DEFAULT}
 
-if [ $WPE_GIT_INCLUDE -n ]
+if [ ! "${WPE_GIT_INCLUDE}" ]
 then
   echo "Adding files to GIT"
   while IFS='' read -r LINE || [ -n "${LINE}" ]; do
@@ -26,7 +26,7 @@ then
   done < "${WPE_GIT_INCLUDE}"
 fi
 
-if [ $WPE_GIT_EXCLUDE -n ]
+if [ ! "${WPE_GIT_EXCLUDE}" ]
 then
   echo "Removing files from GIT"
   while IFS='' read -r LINE || [ -n "${LINE}" ]; do
