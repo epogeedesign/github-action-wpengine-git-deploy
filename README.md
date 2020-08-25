@@ -76,8 +76,8 @@ jobs:
           WPE_SSH_KEY_PUBLIC: ${{ secrets.WPE_SSH_KEY_PUBLIC }}
           WPE_ENVIRONMENT: 'production'
           WPE_LOCAL_BRANCH: 'master'
-          WPE_GIT_INCLUDE: '.github/wpe-deploy-include.txt'
-          WPE_GIT_EXCLUDE: '.github/wpe-deploy-exclude.txt'
+          WPE_GIT_INCLUDE: '.github/wpe-git-include.txt'
+          WPE_GIT_EXCLUDE: '.github/wpe-git-exclude.txt'
 ```
 
 ### Example WPE_GIT_INCLUDE file
