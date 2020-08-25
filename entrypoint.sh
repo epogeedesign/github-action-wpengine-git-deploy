@@ -36,6 +36,8 @@ then
 fi
 
 echo "Committing build changes"
+git config --global user.email "actions@github.com"
+git config --global user.name "Github"
 git commit -m "Github Actions Deploy"
 
 echo "Setting up SSH keys"
