@@ -8,18 +8,29 @@ An action to deploy your repository to a **[WP Engine](https://wpengine.com)** s
 name: WP Engine Git Deploy
 on:
   push:
-    branches: staging
+    branches:
+      - master
+      - staging
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Git checkout
+        uses: actions/checkout@v2
       - run: |
           git fetch --prune --unshallow
+      - name: Set environment to production
+        if: endsWith(github.ref, '/master')
+        run: |
+          echo "::set-env name=WPE_LOCAL_BRANCH::production"
+      - name: Set environment to staging
+        if: endsWith(github.ref, '/staging')
+        run: |
+          echo "::set-env name=WPE_LOCAL_BRANCH::staging"
       - name: GitHub Action for WP Engine Git Deployment
         uses: epogeedesign/github-action-wpengine-git-deploy@master
         env:
-          WPE_ENVIRONMENT_NAME: ${{ secrets.WPE_SSH_KEY_PRIVATE }}
+          WPE_ENVIRONMENT_NAME: 'my-wpe-environment'
           WPE_SSH_KEY_PRIVATE: ${{ secrets.WPE_SSH_KEY_PRIVATE }}
           WPE_SSH_KEY_PUBLIC: ${{ secrets.WPE_SSH_KEY_PUBLIC }}
 ```
@@ -49,7 +60,7 @@ jobs:
 name: WP Engine Git Deploy
 on:
   push:
-    branches: staging
+    branches: master
 jobs:
   build:
     runs-on: ubuntu-latest

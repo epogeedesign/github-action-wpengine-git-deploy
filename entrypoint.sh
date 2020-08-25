@@ -7,33 +7,32 @@ set -e
 : ${WPE_SSH_KEY_PUBLIC?Required secret not set.}
 
 SSH_PATH="$HOME/.ssh"
-WPE_HOST="git.wpengine.com"
 KNOWN_HOSTS_PATH="$SSH_PATH/known_hosts"
+
+WPE_HOST="git.wpengine.com"
 WPE_SSH_KEY_PRIVATE_PATH="$SSH_PATH/WPE_key"
 WPE_SSH_KEY_PUBLIC_PATH="$SSH_PATH/WPE_key.pub"
 WPE_ENVIRONMENT_DEFAULT="production"
 WPE_ENV=${WPE_ENVIRONMENT:-$WPE_ENVIRONMENT_DEFAULT}
 WPE_LOCAL_BRANCH_DEFAULT="master"
-BRANCH=${WPE_LOCAL_BRANCH:-$WPE_LOCAL_BRANCH_DEFAULT}
-GIT_INCLUDE=${WPE_GIT_INCLUDE}
-GIT_EXCLUDE=${WPE_GIT_EXCLUDE}
+WPE_BRANCH=${WPE_LOCAL_BRANCH:-$WPE_LOCAL_BRANCH_DEFAULT}
 
-if [ $GIT_INCLUDE -n ]
+if [ $WPE_GIT_INCLUDE -n ]
 then
   echo "Adding files to GIT"
   include_files=()
-  mapfile -t include_files < "$GIT_INCLUDE"
+  mapfile -t include_files < "$WPE_GIT_INCLUDE"
   for include_file in "${include_files[@]}"
   do
     git add "$include_file" -f
   done
 fi
 
-if [ $GIT_EXCLUDE -n ]
+if [ $WPE_GIT_EXCLUDE -n ]
 then
   echo "Removing files from GIT"
   exclude_files=()
-  mapfile -t exclude_files < "$GIT_INCLUDE"
+  mapfile -t exclude_files < "$WPE_GIT_EXCLUDE"
   for exclude_file in "${exclude_files[@]}"
   do
     git rm -r --ignore-unmatch "$exclude_file"
@@ -60,4 +59,4 @@ git config core.sshCommand "ssh -i $WPE_SSH_KEY_PRIVATE_PATH -o UserKnownHostsFi
 
 echo "Pushing to WP Engine"
 git remote add $WPE_ENV git@$WPE_HOST:$WPE_ENV/$WPE_ENVIRONMENT_NAME.git
-git push -fu $WPE_ENV $BRANCH:master
+git push -fu $WPE_ENV $WPE_BRANCH:master
