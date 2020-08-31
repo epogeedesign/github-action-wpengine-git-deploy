@@ -51,6 +51,8 @@ chmod 644 "$WPE_SSH_KEY_PUBLIC_PATH"
 echo "Adding SSH key to GIT"
 git config core.sshCommand "ssh -i $WPE_SSH_KEY_PRIVATE_PATH -o UserKnownHostsFile=$KNOWN_HOSTS_PATH"
 
+git show-ref
+
 echo "Pushing to WP Engine"
 git remote add $WPE_ENV git@$WPE_HOST:$WPE_ENV/$WPE_ENVIRONMENT_NAME.git
 git push -fu $WPE_ENV HEAD:master
