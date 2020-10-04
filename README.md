@@ -10,7 +10,6 @@ on:
   push:
     branches:
       - master
-      - staging
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -76,6 +75,8 @@ jobs:
 ```
 
 ### Example Workflow with Multiple Branches
+
+It is possible to utilize the multiple environments provided by WP Engine in combination with specific branches in Github. The below example assumes the `master` branch deploys to `my-wpe-production` and the `staging` branch deploys to `my-wpe-staging`. Add or replace these as necessary to match the branches and WP Engine environment names for the given project.
 
 ```
 name: WP Engine Git Deploy
