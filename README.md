@@ -137,3 +137,13 @@ wp-config.php
 
 * [Defining environment variables in GitHub Actions](https://developer.github.com/actions/creating-github-actions/accessing-the-runtime-environment/#environment-variables)
 * [Storing secrets in GitHub repositories](https://developer.github.com/actions/managing-workflows/storing-secrets/)
+
+## Common Problems
+
+* key_load_public: invalid format
+  * The secrets for `WPE_SSH_KEY_PUBLIC` or `WPE_SSH_KEY_PRIVATE` are missing, not using the right names, or the key was improperly copied.
+* fatal: Could not read from remote repository
+  * The provided `WPE_SSH_KEY_PUBLIC` is not added to WP Engine or `WPE_SSH_KEY_PRIVATE` does not match the public key.
+  * The `WPE_ENVIRONMENT_NAME` setting is incorrect or does not match a WP Engine environment with the specified `WPE_SSH_KEY_PUBLIC` key added.
+* system/large file types detected
+  * WP Engine will reject the deploy if particular files are not removed. Check the `WPE_GIT_EXCLUDE` example for removing these files before being deployed.
