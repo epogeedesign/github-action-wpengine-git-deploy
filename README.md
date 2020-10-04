@@ -17,17 +17,10 @@ jobs:
     steps:
       - name: Git checkout
         uses: actions/checkout@v2
-      - run: |
+      - name: Git fetch
+        run: |
           git fetch --prune --unshallow
-      - name: Set environment to production
-        if: endsWith(github.ref, '/master')
-        run: |
-          echo "::set-env name=WPE_LOCAL_BRANCH::production"
-      - name: Set environment to staging
-        if: endsWith(github.ref, '/staging')
-        run: |
-          echo "::set-env name=WPE_LOCAL_BRANCH::staging"
-      - name: GitHub Action for WP Engine Git Deployment
+      - name: Push to WP Engine
         uses: epogeedesign/github-action-wpengine-git-deploy@master
         env:
           WPE_ENVIRONMENT_NAME: 'my-wpe-environment'
@@ -54,7 +47,9 @@ jobs:
 | `WPE_GIT_INCLUDE` | Environment Variable | Path of include file containing list of files to include from GIT after checkout and before deploy. |
 | `WPE_GIT_EXCLUDE` | Environment Variable | Path of include file containing list of files to exclude from GIT after checkout and before deploy. |
 
-### Example with Options
+## Additional Examples
+
+### Example with All Options
 
 ```
 name: WP Engine Git Deploy
@@ -68,7 +63,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: |
           git fetch --prune --unshallow
-      - name: GitHub Action for WP Engine Git Deployment
+      - name: Push to WP Engine
         uses: epogeedesign/github-action-wpengine-git-deploy@master
         env:
           WPE_ENVIRONMENT_NAME: ${{ secrets.WPE_SSH_KEY_PRIVATE }}
@@ -80,25 +75,64 @@ jobs:
           WPE_GIT_EXCLUDE: '.github/wpe-git-exclude.txt'
 ```
 
+### Example Workflow with Multiple Branches
+
+```
+name: WP Engine Git Deploy
+on:
+  push:
+    branches:
+      - master
+      - staging
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v2
+      - name: Git fetch
+        run: |
+          git fetch --prune --unshallow
+      - name: Set environment to production
+        if: endsWith(github.ref, '/master')
+        run: |
+          echo "::set-env name=WPE_ENVIRONMENT_NAME::my-wpe-production"
+      - name: Set environment to staging
+        if: endsWith(github.ref, '/staging')
+        run: |
+          echo "::set-env name=WPE_ENVIRONMENT_NAME::my-wpe-staging"
+      - name: Push to WP Engine
+        uses: epogeedesign/github-action-wpengine-git-deploy@master
+        env:
+          WPE_SSH_KEY_PRIVATE: ${{ secrets.WPE_SSH_KEY_PRIVATE }}
+          WPE_SSH_KEY_PUBLIC: ${{ secrets.WPE_SSH_KEY_PUBLIC }}
+```
+
 ### Example WPE_GIT_INCLUDE file
+
+If the workflow additionally runs build scripts such as NPM and/or produces artifacts these files will not automatically be deployed to WP Engine. The `WPE_GIT_INCLUDE` file may be a list of exact paths and filenames or an *nix file pattern. These files will be added and committed to the temporary Git checkout that is deployed to WP Engine. These files will not be added to Github.
+
 ```
 wp-content/themes/*/dist/*
 ```
 
 ### Example WPE_GIT_EXCLUDE file
+
+WP Engine disallows several files and paths such as wp-config.php and wp-content/uploads/. If these files are committed to Github they will be rejected by WP Engine and cause the build to fail. The `WPE_GIT_EXCLUDE` file may be a list of paths and filenames or an *nix file pattern. These files will be removed and committed to the temporary Git checkout that is deployed to WP Engine. These files will not be removed from Github.
+
 ```
 package.json
 wp-config.php
 ```
 
-### Further reading
-
-* [Defining environment variables in GitHub Actions](https://developer.github.com/actions/creating-github-actions/accessing-the-runtime-environment/#environment-variables)
-* [Storing secrets in GitHub repositories](https://developer.github.com/actions/managing-workflows/storing-secrets/)
-
 ## Setting up your SSH keys
 
 1. [Generate a new SSH key pair](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/) as a special deploy key. The simplest method is to generate a key pair with a blank passphrase, which creates an unencrypted private key.
 2. Store your public and private keys in your GitHub repository as new 'Secrets' (under your repository settings), using the names `WPE_SSH_KEY_PRIVATE` and `WPE_SSH_KEY_PUBLIC` respectively. In theory, this replaces the need for encryption on the key itself, since GitHub repository secrets are encrypted by default.
-3. Add the public key to your target WP Engine environment.
+3. Add the public key to your target WP Engine environment(s).
 4. Per the [WP Engine documentation](https://wpengine.com/git/), it takes about 30-45 minutes for the new SSH key to become active.
+
+### Further reading
+
+* [Defining environment variables in GitHub Actions](https://developer.github.com/actions/creating-github-actions/accessing-the-runtime-environment/#environment-variables)
+* [Storing secrets in GitHub repositories](https://developer.github.com/actions/managing-workflows/storing-secrets/)
