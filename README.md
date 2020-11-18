@@ -17,8 +17,7 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v2
       - name: Git fetch
-        run: |
-          git fetch --prune --unshallow
+        run: git fetch --prune --unshallow
       - name: Push to WP Engine
         uses: epogeedesign/github-action-wpengine-git-deploy@master
         env:
@@ -59,9 +58,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: |
-          git fetch --prune --unshallow
+      - name: Git checkout
+        uses: actions/checkout@v2
+      - name: Git fetch
+        run: git fetch --prune --unshallow
       - name: Push to WP Engine
         uses: epogeedesign/github-action-wpengine-git-deploy@master
         env:
@@ -92,16 +92,13 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v2
       - name: Git fetch
-        run: |
-          git fetch --prune --unshallow
+        run: git fetch --prune --unshallow
       - name: Set environment to production
         if: endsWith(github.ref, '/master')
-        run: |
-          echo "::set-env name=WPE_ENVIRONMENT_NAME::my-wpe-production"
+        run: echo "WPE_ENVIRONMENT_NAME=my-wpe-production" >> $GITHUB_ENV
       - name: Set environment to staging
         if: endsWith(github.ref, '/staging')
-        run: |
-          echo "::set-env name=WPE_ENVIRONMENT_NAME::my-wpe-staging"
+        run: echo "WPE_ENVIRONMENT_NAME=my-wpe-staging" >> $GITHUB_ENV
       - name: Push to WP Engine
         uses: epogeedesign/github-action-wpengine-git-deploy@master
         env:
