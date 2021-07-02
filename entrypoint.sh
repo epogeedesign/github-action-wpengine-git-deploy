@@ -27,7 +27,7 @@ if [ "${WPE_GIT_EXCLUDE}" ]; then
   echo "Removing files from GIT"
   while IFS='' read -r LINE || [ -n "${LINE}" ]; do
     echo "Removing: ${LINE}"
-    git rm -r --ignore-unmatch "${LINE}"
+    git rm -rf --ignore-unmatch "${LINE}"
   done < "${WPE_GIT_EXCLUDE}"
 fi
 
